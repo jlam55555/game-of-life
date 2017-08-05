@@ -7,7 +7,7 @@ import Floor from "floor";
 var pb = new P5Behavior();
 var dots = [];
 pb.setup = function(p) {
-  var gridSize = 10;
+  var gridSize = 5;
   this.gravityScalar = 2;
   this.dotSize = 3;
   this.inertia = 1;
