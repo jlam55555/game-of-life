@@ -200,3 +200,5 @@ Production configuration is given in `prod.json`, which has the following [keys]
 ```
 npm start
 ```
+=======
+# game-of-life
