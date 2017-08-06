@@ -54,8 +54,8 @@ export default class P5Behavior {
     this.p5.ellipse(user.x, user.y, 24);
 
     this.p5.noFill();
-    this.p5.stroke(68);
     this.p5.strokeWeight(1);
+    this.p5.stroke(68);
     this.p5.ellipse(user.x, user.y, 31);
   }
 
