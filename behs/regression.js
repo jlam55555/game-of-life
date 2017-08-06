@@ -6,14 +6,15 @@ import Floor from "floor";
 
 var pb = new P5Behavior();
 pb.setup = function(p) {
+  this.makeRandomFunction = function() {
+
+  };
+  this.functionToMatch = this.makeRandomFunction();
+
 }
 pb.draw = function(floor, p) {
 
   this.clear();
-
-  for(var user of floor.users) {
-    pb.drawUser(user);
-  }
 
   floor.users = floor.users.sort(function(user1, user2) {
     return user1.x - user2.x;
@@ -51,25 +52,37 @@ pb.draw = function(floor, p) {
   }
 
   this.drawingContext.strokeStyle = "white";
-  this.drawingContext.moveTo(0, 0);
   for(var i = 0; i < 576; i++) {
     var y = 0;
     for(var j = 0; j < m4.length; j++) {
       y += m4[j]*Math.pow(i, m4.length-j-1);
     }
-    this.drawingContext.lineTo(i, y);
+    if(i == 0) {
+      this.drawingContext.moveTo(i, y);
+    } else {
+      this.drawingContext.lineTo(i, y);
+    }
   }
-  this.drawingContext.lineWidth = 5;
+  this.strokeWeight(5);
+  var colors = ["#c0392b","#d35400","#f39c12","#27ae60","#2980b9","#8e44ad","#e74c3c","#e67e22","#f1c40f","#2ecc71","#3498db","#9b59b6"]
+  this.drawingContext.strokeStyle = colors[m4.length-2];
   this.drawingContext.stroke();
-  this.drawingContext.lineWidth = 1;
 
-  var equationString = "y=";
+  var fontSize = 20;
+  this.drawingContext.font = "bold" + fontSize + "px Courier New";
+  this.textFont("Courier New", fontSize);
+  this.textStyle(this.BOLD);
+  this.drawingContext.fillStyle = "white";
+  var equationString = "y = ";
   for(var i = 0; i < m4.length; i++) {
     equationString += String.fromCharCode(97+i) + (m4.length-i-1 !== 0 ? (m4.length-i-1 !== 1 ? ("x^" + (m4.length-i-1) + " + ") : "x + ") : "");
-    this.drawingContext.fillText(String.fromCharCode(97+i) + ": " + m4[i].toExponential(1), 10, 20+10*i);
+    this.drawingContext.fillText(String.fromCharCode(97+i) + ": " + m4[i].toExponential(1).replace(/e/, "*10^"), fontSize, 2*fontSize+fontSize*i);
   }
-  this.drawingContext.fillText(equationString, 10, 10);
+  this.drawingContext.fillText(equationString, fontSize, fontSize);
 
+  for(var user of floor.users) {
+    pb.drawUser(user);
+  }
 
 }
 
@@ -77,6 +90,7 @@ export const behavior = {
   title: "Line Fitter",
   init: pb.init.bind(pb),
   frameRate: 20,
-  numGhosts: 5,
+  maxUsers: 12,
+  numGhosts: 2,
   render: pb.render.bind(pb)
 }
