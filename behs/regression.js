@@ -4,6 +4,7 @@ import * as Sensor from "sensors";
 import * as Display from "display";
 import Floor from "floor";
 
+
 var pb = new P5Behavior();
 pb.setup = function(p) {
   this.makeRandomFunction = function() {
@@ -12,6 +13,8 @@ pb.setup = function(p) {
     for(var i = 0; i < degree+1; i++) {
       points.push({x: (i+0.5)*576/(degree+1), y: Math.random()*200+188});
     }
+
+
     var m1 = [];
     var m2 = [];
     for(var point of points) {
@@ -66,8 +69,9 @@ pb.draw = function(floor, p) {
     }
   }
 
-  // solving matrix equation: m2*m4=m1
 
+
+  // solving matrix equation: m2*m4=m1
   var m1 = [];
   var m2 = [];
   for(var user of floor.users) {
@@ -78,7 +82,6 @@ pb.draw = function(floor, p) {
     }
     m2.push(m2Row);
   }
-
   // matrix invert code courtesy of http://blog.acipo.com/matrix-inversion-in-javascript/ and minified with https://jscompress.com/
   function matrix_invert(r){if(r.length===r[0].length){var f=0,n=0,t=0,e=r.length,o=0,i=[],g=[];for(f=0;f<e;f+=1)for(i[i.length]=[],g[g.length]=[],t=0;t<e;t+=1)i[f][t]=f==t?1:0,g[f][t]=r[f][t];for(f=0;f<e;f+=1){if(0==(o=g[f][f])){for(n=f+1;n<e;n+=1)if(0!=g[n][f]){for(t=0;t<e;t++)o=g[f][t],g[f][t]=g[n][t],g[n][t]=o,o=i[f][t],i[f][t]=i[n][t],i[n][t]=o;break}if(0==(o=g[f][f]))return}for(t=0;t<e;t++)g[f][t]=g[f][t]/o,i[f][t]=i[f][t]/o;for(n=0;n<e;n++)if(n!=f)for(o=g[n][f],t=0;t<e;t++)g[n][t]-=o*g[f][t],i[n][t]-=o*i[f][t]}return i}}
   var m3 = matrix_invert(m2);
@@ -132,34 +135,91 @@ pb.draw = function(floor, p) {
   this.drawingContext.stroke();
 
   var fontSize = 20;
-  this.drawingContext.font = "bold" + fontSize + "px Courier New";
-  this.textFont("Courier New", fontSize);
+  this.drawingContext.font = "bold" + fontSize + "px Tahoma";
+  this.textFont("Tahoma", fontSize);
   this.textStyle(this.BOLD);
   this.drawingContext.fillStyle = "white";
   this.drawingContext.strokeStyle = "black";
+  this.strokeWeight(1);
   this.textAlign(this.LEFT);
-  var equationString = "y = ";
-  for(var i = 0; i < m4.length; i++) {
+  var equationString = "Make the Line fit in the zone!";//"y = ";
+  /*for(var i = 0; i < m4.length; i++) {
     equationString += String.fromCharCode(97+i) + (m4.length-i-1 !== 0 ? (m4.length-i-1 !== 1 ? ("x^" + (m4.length-i-1) + " + ") : "x + ") : "");
     this.drawingContext.fillText(String.fromCharCode(97+i) + ": " + m4[i].toExponential(1).replace(/e\+?/, "*10^"), fontSize, 2*fontSize+fontSize*i);
+  }*/
+  var clock = ['🕛','🕐','🕑','🕒','🕓','🕔','🕕','🕖','🕗','🕘','🕙','🕚','🕛'];
+  if (!(matches || this.timer === 0)) {
+    this.drawingContext.strokeText(equationString, 20, 30);
+    this.drawingContext.fillText(equationString, 20, 30);
   }
-  this.drawingContext.strokeText(equationString, fontSize, fontSize);
-  this.drawingContext.fillText(equationString, fontSize, fontSize);
   this.textAlign(this.RIGHT);
-  this.drawingContext.font = "bold " + (fontSize*2) + "px Courier New";
-  this.drawingContext.strokeText(this.timer, 576-fontSize, fontSize*2);
-  this.drawingContext.fillText(this.timer, 576-fontSize, fontSize*2);
+  this.drawingContext.font = "bold " + (fontSize*2) + "px Tahoma";
+  this.drawingContext.strokeText(clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
+  this.drawingContext.fillText(clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
   this.drawingContext.save();
   this.drawingContext.translate(288, 288);
   this.drawingContext.rotate(Math.PI);
   this.drawingContext.translate(-288, -288);
-  this.drawingContext.strokeText(this.timer, 576-fontSize, fontSize*2);
-  this.drawingContext.fillText(this.timer, 576-fontSize, fontSize*2);
+  this.drawingContext.fillStyle = "white";
+  this.drawingContext.strokeStyle = "black";
+  this.strokeWeight(1);
+  this.textAlign(this.LEFT);
+  this.drawingContext.font = "bold" + fontSize + "px Tahoma";
+  this.textFont("Tahoma", fontSize);
+  //this.drawingContext.strokeText(equationString, (576/2)-(this.drawingContext.measureText(equationString).width/2), fontSize);
+  if (!(matches || this.timer === 0)) {
+    this.drawingContext.strokeText(equationString, 20, 30);
+    this.drawingContext.fillText(equationString, 20, 30);
+  }
+  this.textAlign(this.RIGHT);
+  this.drawingContext.font = "bold " + (fontSize*2) + "px Tahoma";
+  this.drawingContext.strokeText(clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
+  this.drawingContext.fillText(clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
   this.drawingContext.restore();
-
+  this.winCheck = "";
+  //var equationString = "Make the Line fit in the zone!"
   if(matches || this.timer === 0) {
     this.strokeWeight(1);
     this.drawingContext.strokeStyle = (matches && this.timer !== 0) ? "green" : "red";
+    this.winCheck = (matches && this.timer !== 0) ? "✔️" : "✖️";
+
+    equationString = (matches && this.timer !== 0) ? "Nice! You just made:": "Close, but not quite!";
+    var equationStringCorrect="";
+    if (matches && this.timer !== 0) {
+      equationStringCorrect="y= ";
+      for(var i = 0; i < this.functionToMatch.length; i++) {
+        equationStringCorrect += ((this.functionToMatch[i]<1)? this.functionToMatch[i].toPrecision(1): Math.round(this.functionToMatch[i]))+"x^"+(this.functionToMatch.length-i-1)+"+" ;
+      }
+    }
+     equationStringCorrect = equationStringCorrect.slice(0,-1);
+    console.log(equationString,equationStringCorrect);
+
+    this.textAlign(this.LEFT);
+    this.drawingContext.font = "bold" + fontSize + "px Tahoma";
+    this.textFont("Tahoma", fontSize);
+    this.drawingContext.strokeText(equationString, 20, 30);
+    this.drawingContext.fillText(equationString, 20, 30);
+    this.drawingContext.fillText(equationStringCorrect, 20, 60);
+    this.textAlign(this.RIGHT);
+    this.drawingContext.font = "bold " + (fontSize*2) + "px Tahoma";
+    this.drawingContext.strokeText(this.winCheck+clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
+    this.drawingContext.fillText(this.winCheck+clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
+    this.drawingContext.save();
+    this.drawingContext.translate(288, 288);
+    this.drawingContext.rotate(Math.PI);
+    this.drawingContext.translate(-288, -288);
+    this.textAlign(this.LEFT);
+    this.drawingContext.font = "bold" + fontSize + "px Tahoma";
+    this.textFont("Tahoma", fontSize);
+    this.drawingContext.strokeText(equationString, 20, 30);
+    this.drawingContext.fillText(equationString, 20, 30);
+    this.drawingContext.fillText(equationStringCorrect, 20, 60);
+    this.textAlign(this.RIGHT);
+    this.drawingContext.font = "bold " + (fontSize*2) + "px Tahoma";
+    this.drawingContext.strokeText(this.winCheck+clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
+    this.drawingContext.fillText(this.winCheck+clock[clock.length-Math.floor(clock.length*this.timer/21+1)]+" "+("0"+this.timer).slice(-2), 576-fontSize, fontSize*2);
+    this.drawingContext.restore();
+
     for(var i = 0; i < 576; i+=10) {
       var y = 0;
       for(var j = 0; j < this.functionToMatch.length; j++) {
@@ -177,7 +237,7 @@ pb.draw = function(floor, p) {
     setTimeout(function() {
       _this.stopped = false;
       _this.timer = 20;
-    }, 2000);
+    }, 4000);
   }
 
   for(var user of floor.users) {
