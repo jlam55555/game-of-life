@@ -10,11 +10,11 @@ pb.setup = function(p) {
   var gridSize = 20;
   this.gravityScalar = 2;
   this.dotSize = 3;
-  this.inertia = .99;
+  this.inertia = .98;
   this.maxAcceleration = 5;
   for(var i = 0; i < gridSize; i++) {
     for(var j = 0; j < gridSize; j++) {
-      dots.push({x: (i+0.5)*(576/gridSize), y: (j+0.5)*(576/gridSize), xVelocity: 0, yVelocity: 0, initX: this.x, initY: this.y});
+      dots.push({x: (i+0.5)*(576/gridSize), y: (j+0.5)*(576/gridSize), xVelocity: 0, yVelocity: 0, initX: this.x, initY: this.y, age:0});
     }
   }
 }
@@ -38,13 +38,31 @@ pb.draw = function(floor, p) {
     this.drawingContext.beginPath();
     this.drawingContext.arc(dot.x, dot.y, this.dotSize, 0, Math.PI*2);
     this.drawingContext.closePath();
-    var color = ("00" + Math.floor(255-Math.sqrt(Math.pow(dot.xVelocity,2)+Math.pow(dot.yVelocity,2))*256/(10)).toString(16)).slice(-2);
-    this.drawingContext.fillStyle = "#ff" + color + color;
+    var redshiftcolor = ("00" + Math.floor(255-Math.sqrt(Math.pow(dot.xVelocity,2)+Math.pow(dot.yVelocity,2))*256/(10)).toString(16)).slice(-2);
+    this.drawingContext.fillStyle = "#ff" + redshiftcolor + redshiftcolor;
+    if (dot.xVelocity<.5 && dot.yVelocity<.5) {
+      dot.age+=1;
+      //var brownshiftcolor = ("0"+(Math.floor(dot.age*1/199)).toString(16)).slice(-2)+(Math.floor(dot.age*1/116)).toString(16)+Math.floor(dot.age*1/56).toString(16);
+      //console.log(brownshiftcolor);
+      //this.drawingContext.fillStyle = brownshiftcolor;
+    }else{
+      dot.age = 0;
+    }
+
     this.drawingContext.fill();
     dot.x += dot.xVelocity;
     dot.y += dot.yVelocity;
     dot.xVelocity*=this.inertia;
     dot.yVelocity*=this.inertia;
+    if (dot.x<=0) {
+      dot.x = 576-1;
+    }
+    if (this.y<=0) {
+      dot.y = 576-1;
+    }
+    dot.x%=576;
+    dot.y%=576;
+	}
   }
 }
 
