@@ -7,14 +7,14 @@ import Floor from "floor";
 var pb = new P5Behavior();
 var dots = [];
 pb.setup = function(p) {
-  var gridSize = 5;
+  var gridSize = 20;
   this.gravityScalar = 2;
   this.dotSize = 3;
-  this.inertia = 1;
+  this.inertia = .99;
   this.maxAcceleration = 5;
   for(var i = 0; i < gridSize; i++) {
     for(var j = 0; j < gridSize; j++) {
-      dots.push({x: (i+0.5)*(576/gridSize), y: (j+0.5)*(576/gridSize), xVelocity: 0, yVelocity: 0});
+      dots.push({x: (i+0.5)*(576/gridSize), y: (j+0.5)*(576/gridSize), xVelocity: 0, yVelocity: 0, initX: this.x, initY: this.y});
     }
   }
 }
@@ -43,6 +43,8 @@ pb.draw = function(floor, p) {
     this.drawingContext.fill();
     dot.x += dot.xVelocity;
     dot.y += dot.yVelocity;
+    dot.xVelocity*=this.inertia;
+    dot.yVelocity*=this.inertia;
   }
 }
 
@@ -50,6 +52,6 @@ export const behavior = {
   title: "Gravity Field Simulator",
   init: pb.init.bind(pb),
   frameRate: 60,
-  numGhosts: 3,
+  numGhosts: 0,
   render: pb.render.bind(pb)
 }
